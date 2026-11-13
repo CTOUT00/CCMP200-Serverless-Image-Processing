@@ -13,7 +13,13 @@ def lambda_handler(event, context):
 
     try:
         # Get the image name from the event
-        image_key = event["key"]
+        if "Records" in event:
+            # Image uploaded to S3
+            from urllib.parse import unquote_plus
+            image_key = unquote_plus(event["Records"][0]["s3"]["object"]["key"])
+        else:
+            # Manual test or Step Functions
+            image_key = event["key"]
 
         print("Processing image:", image_key)
 
